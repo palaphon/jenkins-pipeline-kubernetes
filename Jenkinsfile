@@ -130,9 +130,9 @@ pipeline {
         string (name: 'DOCKER_USR',       defaultValue: 'admin',                                   description: 'Your helm repository user')
         string (name: 'DOCKER_PSW',       defaultValue: 'P@ssw0rd',                                description: 'Your helm repository password')
         string (name: 'IMG_PULL_SECRET',  defaultValue: 'docker-reg-secret',                       description: 'The Kubernetes secret for the Docker registry (imagePullSecrets)')
-        /*string (name: 'HELM_REPO',        defaultValue: 'https://artifactory.my/artifactory/helm', description: 'Your helm repository')
-        string (name: 'HELM_USR',         defaultValue: 'admin',                                   description: 'Your helm repository user')
-        string (name: 'HELM_PSW',         defaultValue: 'P@ssw0rd',                                description: 'Your helm repository password')*/
+        //string (name: 'HELM_REPO',        defaultValue: 'https://artifactory.my/artifactory/helm', description: 'Your helm repository')
+        //string (name: 'HELM_USR',         defaultValue: 'admin',                                   description: 'Your helm repository user')
+        //string (name: 'HELM_PSW',         defaultValue: 'P@ssw0rd',                                description: 'Your helm repository password')
 
     }
 
@@ -185,17 +185,17 @@ pipeline {
                 echo "Building application and Docker image"
                 sh "${WORKSPACE}/build.sh --build --registry ${DOCKER_REG} --tag ${DOCKER_TAG} --docker_usr ${DOCKER_USR} --docker_psw ${DOCKER_PSW}"
 
-                echo "Running tests"
+                //echo "Running tests"
 
                 // Kill container in case there is a leftover
-                sh "[ -z \"\$(docker ps -a | grep ${ID} 2>/dev/null)\" ] || docker rm -f ${ID}"
+                //sh "[ -z \"\$(docker ps -a | grep ${ID} 2>/dev/null)\" ] || docker rm -f ${ID}"
 
-                echo "Starting ${IMAGE_NAME} container"
-                sh "docker run --detach --name ${ID} --rm --publish ${TEST_LOCAL_PORT}:80 ${DOCKER_REG}/${IMAGE_NAME}:${DOCKER_TAG}"
+                //echo "Starting ${IMAGE_NAME} container"
+                //sh "docker run --detach --name ${ID} --rm --publish ${TEST_LOCAL_PORT}:80 ${DOCKER_REG}/${IMAGE_NAME}:${DOCKER_TAG}"
 
-                script {
-                    host_ip = sh(returnStdout: true, script: '/sbin/ip route | awk \'/default/ { print $3 ":${TEST_LOCAL_PORT}" }\'')
-                }
+                //script {
+                //    host_ip = sh(returnStdout: true, script: '/sbin/ip route | awk \'/default/ { print $3 ":${TEST_LOCAL_PORT}" }\'')
+                //}
             }
         }
 /*
