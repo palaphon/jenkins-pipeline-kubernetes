@@ -156,11 +156,11 @@ pipeline {
                 sh "helm init --client-only"
 
                 // Make sure parameters file exists
-                script {
-                    if (! fileExists("${PARAMETERS_FILE}")) {
-                        echo "ERROR: ${PARAMETERS_FILE} is missing!"
-                    }
-                }
+                //script {
+                //    if (! fileExists("${PARAMETERS_FILE}")) {
+                //        echo "ERROR: ${PARAMETERS_FILE} is missing!"
+                //    }
+                //}
 
                 // Load Docker registry and Helm repository configurations from file
                 //load "${JENKINS_HOME}/parameters.groovy"
