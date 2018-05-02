@@ -116,7 +116,7 @@ pushHelmChart() {
     #curl -u${HELM_USR}:${HELM_PSW} -T ${chart_name} "${HELM_REPO}/$(basename ${chart_name})" || errorExit "Uploading helm chart failed"
 	#helm lint --strict ${chart_name} || errorExit "helm lint --strict chart failed"
 	helm package demoapp ${chart_name} || errorExit "Uploading helm chart failed"
-	bx pr load-helm-chart --archive ${BUILD_DIR}/helm/*.tgz 
+	bx pr load-helm-chart --archive ${chart_name}
     echo
 }
 
