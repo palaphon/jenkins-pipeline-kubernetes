@@ -55,6 +55,8 @@ setHostsFile () {
 	
 	grep -q -F '122.155.223.7 mycluster.icp' /etc/hosts || echo '122.155.223.7 mycluster.icp' >> /etc/hosts
 	
+	cat /etc/hosts
+	
 	bx pr login -a ${HELM_REPO} --skip-ssl-validation -u ${HELM_USR} -p P@${HELM_PSW} -c ${HELM_CLUSTER}
 }
 
