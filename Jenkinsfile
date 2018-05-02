@@ -223,8 +223,8 @@ pipeline {
         ////////// Step 3 //////////
         stage('Publish Docker and Helm') {
             steps {
-                echo "Stop and remove container"
-                sh "docker stop ${ID}"
+                //echo "Stop and remove container"
+                //sh "docker stop ${ID}"
 
                 echo "Pushing ${DOCKER_REG}/${IMAGE_NAME}:${DOCKER_TAG} image to registry"
                 sh "${WORKSPACE}/build.sh --push --registry ${DOCKER_REG} --tag ${DOCKER_TAG} --docker_usr ${DOCKER_USR} --docker_psw ${DOCKER_PSW}"
