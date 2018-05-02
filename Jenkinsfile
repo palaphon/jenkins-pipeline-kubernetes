@@ -46,7 +46,7 @@ def helmDelete (namespace, release) {
 
     script {
         release = "${release}-${namespace}"
-        sh "[ -z \"\$(helm ls --short ${release} 2>/dev/null)\" ] || helm delete --purge ${release}"
+        sh "[ -z \"\$(helm ls --short ${release} 2>/dev/null)\" ] || helm delete --purge ${release} --tls"
     }
 }
 
@@ -114,6 +114,15 @@ pipeline {
         TEST_LOCAL_PORT = 8817
         DEPLOY_PROD = false
         //PARAMETERS_FILE = "${JENKINS_HOME}/parameters.groovy"
+		DOCKER_REG = 'mycluster.icp:8500/default'
+		DOCKER_TAG = 'dev'
+		DOCKER_USR = 'admin'
+		DOCKER_PSW = 'P@ssw0rd'
+		IMG_PULL_SECRET = 'docker-reg-secret'
+		HELM_REPO = 'https://mycluster.icp:8443'
+		HELM_USR = 'admin'
+		HELM_PSW = 'P@ssw0rd'
+		HELM_CLUSTER = 'id-mycluster-account'
     }
 
     parameters {
@@ -234,7 +243,7 @@ pipeline {
 
                 echo "Packing helm chart"
                 //sh "${WORKSPACE}/build.sh --pack_helm --push_helm --helm_repo ${HELM_REPO} --helm_usr ${HELM_USR} --helm_psw ${HELM_PSW}"
-				sh "${WORKSPACE}/build.sh --pack_helm --push_helm"
+				sh "${WORKSPACE}/build.sh --pack_helm --push_helm --helm_repo ${HELM_REPO} --helm_usr ${HELM_USR} --helm_psw ${HELM_PSW} --helm_cluster ${HELM_CLUSTER}"
             }
         }
 
