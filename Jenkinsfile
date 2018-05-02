@@ -33,7 +33,7 @@ def helmInstall (namespace, release) {
         sh """
             helm upgrade --install --namespace ${namespace} ${release} \
                 --set imagePullSecrets=${IMG_PULL_SECRET} \
-                --set image.repository=${DOCKER_REG}/${IMAGE_NAME},image.tag=${DOCKER_TAG} helm/acme --tls
+                --set image.repository=${DOCKER_REG}/${IMAGE_NAME},image.tag=${env.BUILD_ID} helm/acme --tls
         """
 	    sh "bx pr logout"
         sh "sleep 5"
@@ -160,9 +160,9 @@ pipeline {
         stage('Git clone and setup') {
             steps {
                 echo "Check out acme code"
-                git branch: "master",
+                //git branch: "master",
                 //        credentialsId: 'eldada-bb',
-                        url: 'https://github.com/palaphon/jenkins-pipeline-kubernetes.git'
+                //        url: 'https://github.com/palaphon/jenkins-pipeline-kubernetes.git'
 
 				sh "${WORKSPACE}/build.sh --set_hostsfile"
         
@@ -189,7 +189,7 @@ pipeline {
                 // Define a unique name for the tests container and helm release
                 script {
                     branch = GIT_BRANCH.replaceAll('/', '-').replaceAll('\\*', '-')
-                    ID = "${IMAGE_NAME}-${DOCKER_TAG}-${branch}"
+                    ID = "${IMAGE_NAME}-${env.BUILD_ID}-${branch}"
 
                     echo "Global ID set to ${ID}"
                 }
@@ -200,7 +200,7 @@ pipeline {
         stage('Build and tests') {
             steps {
                 echo "Building application and Docker image"
-                sh "${WORKSPACE}/build.sh --build --registry ${DOCKER_REG} --tag ${DOCKER_TAG} --docker_usr ${DOCKER_USR} --docker_psw ${DOCKER_PSW}"
+                sh "${WORKSPACE}/build.sh --build --registry ${DOCKER_REG} --tag ${env.BUILD_ID} --docker_usr ${DOCKER_USR} --docker_psw ${DOCKER_PSW}"
 
                 //echo "Running tests"
 
@@ -243,8 +243,8 @@ pipeline {
                 //echo "Stop and remove container"
                 //sh "docker stop ${ID}"
 
-                echo "Pushing ${DOCKER_REG}/${IMAGE_NAME}:${DOCKER_TAG} image to registry"
-                sh "${WORKSPACE}/build.sh --push --registry ${DOCKER_REG} --tag ${DOCKER_TAG} --docker_usr ${DOCKER_USR} --docker_psw ${DOCKER_PSW}"
+                echo "Pushing ${DOCKER_REG}/${IMAGE_NAME}:${env.BUILD_ID} image to registry"
+                sh "${WORKSPACE}/build.sh --push --registry ${DOCKER_REG} --tag ${env.BUILD_ID} --docker_usr ${DOCKER_USR} --docker_psw ${DOCKER_PSW}"
 
                 echo "Packing helm chart"
                 //sh "${WORKSPACE}/build.sh --pack_helm --push_helm --helm_repo ${HELM_REPO} --helm_usr ${HELM_USR} --helm_psw ${HELM_PSW}"
@@ -307,7 +307,7 @@ pipeline {
                 script {
                     namespace = 'staging'
 
-                    echo "Deploying application ${IMAGE_NAME}:${DOCKER_TAG} to ${namespace} namespace"
+                    echo "Deploying application ${IMAGE_NAME}:${env.BUILD_ID} to ${namespace} namespace"
                     createNamespace (namespace)
 
                     // Remove release if exists
@@ -385,12 +385,16 @@ pipeline {
                     DEPLOY_PROD = true
                     namespace = 'production'
 
-                    echo "Deploying application ${IMAGE_NAME}:${DOCKER_TAG} to ${namespace} namespace"
+                    echo "Deploying application ${IMAGE_NAME}:${env.BUILD_ID} to ${namespace} namespace"
                     createNamespace (namespace)
+                    
+                    ID = "acme"
+
+                    echo "Global ID set to ${ID} for production"
 
                     // Deploy with helm
                     echo "Deploying"
-                    helmInstall (namespace, "${ID}")
+                    helmInstall (namespace, "acme")
                 }
             }
         }
