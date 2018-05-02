@@ -115,7 +115,7 @@ pushHelmChart() {
     [ ! -z "${chart_name}" ] || errorExit "Did not find the helm chart to deploy"
     #curl -u${HELM_USR}:${HELM_PSW} -T ${chart_name} "${HELM_REPO}/$(basename ${chart_name})" || errorExit "Uploading helm chart failed"
 	helm lint --strict ${SCRIPT_DIR}/helm/acme || errorExit "helm lint --strict chart failed"
-	helm package demoapp ${chart_name} || errorExit "Uploading helm chart failed"
+	helm package ${SCRIPT_DIR}/helm/acme || errorExit "Uploading helm chart failed"
 	bx pr load-helm-chart --archive ${chart_name}
     echo
 }
