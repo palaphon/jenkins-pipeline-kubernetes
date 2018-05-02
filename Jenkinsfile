@@ -197,7 +197,7 @@ pipeline {
                 }
             }
         }
-
+/*
         // Run the 3 tests on the currently running ACME Docker container
         stage('Local tests') {
             parallel {
@@ -218,7 +218,7 @@ pipeline {
                 }
             }
         }
-
+*/
         ////////// Step 3 //////////
         stage('Publish Docker and Helm') {
             steps {
@@ -230,7 +230,7 @@ pipeline {
 
                 echo "Packing helm chart"
                 //sh "${WORKSPACE}/build.sh --pack_helm --push_helm --helm_repo ${HELM_REPO} --helm_usr ${HELM_USR} --helm_psw ${HELM_PSW}"
-				sh "${WORKSPACE}/build.sh --pack_helm --push_helm --helm_repo ${HELM_REPO} --helm_usr ${HELM_USR} --helm_psw ${HELM_PSW}"
+				sh "${WORKSPACE}/build.sh --pack_helm --push_helm --helm_usr ${HELM_USR} --helm_psw ${HELM_PSW}"
             }
         }
 
