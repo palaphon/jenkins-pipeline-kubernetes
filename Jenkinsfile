@@ -27,11 +27,12 @@ def helmInstall (namespace, release) {
 
     script {
         release = "${release}-${namespace}"
-        sh "helm repo add helm ${HELM_REPO}; helm repo update"
+        #sh "helm repo add helm ${HELM_REPO}; helm repo update"
+		sh "helm repo update"
         sh """
-            helm upgrade --install --tls --namespace ${namespace} ${release} \
+            helm upgrade --install --namespace ${namespace} ${release} \
                 --set imagePullSecrets=${IMG_PULL_SECRET} \
-                --set image.repository=${DOCKER_REG}/${IMAGE_NAME},image.tag=${DOCKER_TAG} helm/acme
+                --set image.repository=${DOCKER_REG}/${IMAGE_NAME},image.tag=${DOCKER_TAG} helm/acme --tls
         """
         sh "sleep 5"
     }
@@ -129,9 +130,9 @@ pipeline {
         string (name: 'DOCKER_USR',       defaultValue: 'admin',                                   description: 'Your helm repository user')
         string (name: 'DOCKER_PSW',       defaultValue: 'P@ssw0rd',                                description: 'Your helm repository password')
         string (name: 'IMG_PULL_SECRET',  defaultValue: 'docker-reg-secret',                       description: 'The Kubernetes secret for the Docker registry (imagePullSecrets)')
-        /*string (name: 'HELM_REPO',        defaultValue: 'https://artifactory.my/artifactory/helm', description: 'Your helm repository')*/
+        /*string (name: 'HELM_REPO',        defaultValue: 'https://artifactory.my/artifactory/helm', description: 'Your helm repository')
         string (name: 'HELM_USR',         defaultValue: 'admin',                                   description: 'Your helm repository user')
-        string (name: 'HELM_PSW',         defaultValue: 'P@ssw0rd',                                description: 'Your helm repository password')
+        string (name: 'HELM_PSW',         defaultValue: 'P@ssw0rd',                                description: 'Your helm repository password')*/
 
     }
 
@@ -230,7 +231,7 @@ pipeline {
 
                 echo "Packing helm chart"
                 //sh "${WORKSPACE}/build.sh --pack_helm --push_helm --helm_repo ${HELM_REPO} --helm_usr ${HELM_USR} --helm_psw ${HELM_PSW}"
-				sh "${WORKSPACE}/build.sh --pack_helm --push_helm --helm_usr ${HELM_USR} --helm_psw ${HELM_PSW}"
+				sh "${WORKSPACE}/build.sh --pack_helm --push_helm"
             }
         }
 

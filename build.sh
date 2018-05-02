@@ -11,9 +11,9 @@ DOCKER_PSW=${DOCKER_PSW:-password}
 DOCKER_REPO=${DOCKER_REPO:-acme}
 DOCKER_TAG=${DOCKER_TAG:-dev}
 
-HELM_REPO=${HELM_REG:-http://artifactory.my/artifactory/helm}
-HELM_USR=${HELM_USR:-admin}
-HELM_PSW=${HELM_PSW:-password}
+#HELM_REPO=${HELM_REG:-http://artifactory.my/artifactory/helm}
+#HELM_USR=${HELM_USR:-admin}
+#HELM_PSW=${HELM_PSW:-password}
 
 errorExit () {
     echo -e "\nERROR: $1"; echo
@@ -35,9 +35,9 @@ Usage: ./${SCRIPT_NAME} <options>
 --docker_usr user   : [optional] Docker registry username
 --docker_psw pass   : [optional] Docker registry password
 --tag tag           : [optional] A custom app version
---helm_repo         : [optional] The helm repository to push to
---helm_usr          : [optional] The user for uploading to the helm repository
---helm_psw          : [optional] The password for uploading to the helm repository
+#--helm_repo         : [optional] The helm repository to push to
+#--helm_usr          : [optional] The user for uploading to the helm repository
+#--helm_psw          : [optional] The password for uploading to the helm repository
 
 -h | --help         : Show this usage
 
@@ -150,15 +150,15 @@ processOptions () {
             --tag)
                 DOCKER_TAG=${2}; shift 2
             ;;
-            --helm_repo)
-                HELM_REPO=${2}; shift 2
-            ;;
-            --helm_usr)
-                HELM_USR=${2}; shift 2
-            ;;
-            --helm_psw)
-                HELM_PSW=${2}; shift 2
-            ;;
+            #--helm_repo)
+            #    HELM_REPO=${2}; shift 2
+            #;;
+            #--helm_usr)
+            #    HELM_USR=${2}; shift 2
+            #;;
+            #--helm_psw)
+            #    HELM_PSW=${2}; shift 2
+            #;;
             -h | --help)
                 usage
             ;;
@@ -176,8 +176,8 @@ main () {
     echo "DOCKER_USR:   ${DOCKER_USR}"
     echo "DOCKER_REPO:  ${DOCKER_REPO}"
     echo "DOCKER_TAG:   ${DOCKER_TAG}"
-    echo "HELM_REPO:    ${HELM_REPO}"
-    echo "HELM_USR:     ${HELM_USR}"
+    #echo "HELM_REPO:    ${HELM_REPO}"
+    #echo "HELM_USR:     ${HELM_USR}"
 
     # Cleanup
     rm -rf ${BUILD_DIR}
