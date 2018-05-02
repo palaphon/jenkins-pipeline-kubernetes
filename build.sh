@@ -57,7 +57,6 @@ setHostsFile () {
 	
 	cat /etc/hosts
 	
-	bx pr login -a ${HELM_REPO} --skip-ssl-validation -u ${HELM_USR} -p P@${HELM_PSW} -c ${HELM_CLUSTER}
 }
 
 # Docker login
@@ -71,6 +70,7 @@ dockerLogin () {
         fi
 
         docker login ${DOCKER_REG} -u ${DOCKER_USR} -p ${DOCKER_PSW} || errorExit "Docker login to ${DOCKER_REG} failed"
+	    docker logout
     else
         echo "Docker registry not set. Skipping"
     fi
@@ -92,14 +92,18 @@ buildDockerImage () {
     rm -f ${BUILD_DIR}/site/*.org
 
     echo -e "\nBuilding Docker image"
+    docker login ${DOCKER_REG} -u ${DOCKER_USR} -p ${DOCKER_PSW} || errorExit "Docker login to ${DOCKER_REG} failed"
     docker build -t ${DOCKER_REG}/${DOCKER_REPO}:${DOCKER_TAG} ${BUILD_DIR} || errorExit "Building ${DOCKER_REPO}:${DOCKER_TAG} failed"
+	docker logout
 }
 
 # Push Docker images
 pushDockerImage () {
     echo -e "\nPushing ${DOCKER_REPO}:${DOCKER_TAG}"
 
+    docker login ${DOCKER_REG} -u ${DOCKER_USR} -p ${DOCKER_PSW} || errorExit "Docker login to ${DOCKER_REG} failed"
     docker push ${DOCKER_REG}/${DOCKER_REPO}:${DOCKER_TAG} || errorExit "Pushing ${DOCKER_REPO}:${DOCKER_TAG} failed"
+	docker logout
 }
 
 # Packing the helm chart
@@ -110,6 +114,7 @@ packHelmChart() {
     mkdir -p ${BUILD_DIR}/helm
 	bx pr login -a ${HELM_REPO} --skip-ssl-validation -u ${HELM_USR} -p P@${HELM_PSW} -c ${HELM_CLUSTER}
     helm package -d ${BUILD_DIR}/helm ${SCRIPT_DIR}/helm/acme || errorExit "Packing helm chart ${SCRIPT_DIR}/helm/acme failed"
+	bx pr logout
 }
 
 # Pushing the Helm chart
@@ -129,6 +134,7 @@ pushHelmChart() {
 	#helm lint --strict ${SCRIPT_DIR}/helm/acme || errorExit "helm lint --strict chart failed"
 	helm package ${SCRIPT_DIR}/helm/acme || errorExit "Uploading helm chart failed"
 	bx pr load-helm-chart --archive ${chart_name}
+	bx pr logout
     echo
 }
 
