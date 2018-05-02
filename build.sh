@@ -16,6 +16,7 @@ HELM_USR=${HELM_USR:-admin}
 HELM_PSW=${HELM_PSW:-P@ssw0rd}
 HELM_CLUSTER=${HELM_CLUSTER:-id-mycluster-account}
 
+
 errorExit () {
     echo -e "\nERROR: $1"; echo
     exit 1
@@ -46,6 +47,13 @@ Usage: ./${SCRIPT_NAME} <options>
 END_USAGE
 
     exit 1
+}
+
+#setHostsFile
+setHostsFile () {
+    echo -e "\nSet Hosts File"
+	
+	grep -q -F '122.155.223.7 mycluster.icp' /etc/hosts || echo '122.155.223.7 mycluster.icp' >> /etc/hosts
 }
 
 # Docker login
@@ -140,6 +148,9 @@ processOptions () {
             --push_helm)
                 PUSH_HELM="true"; shift
             ;;
+			--set_hostsfile)
+                SET_HOSTSFILE="true"; shift
+            ;;
             --registry)
                 DOCKER_REG=${2}; shift 2
             ;;
@@ -187,6 +198,10 @@ main () {
     # Cleanup
     rm -rf ${BUILD_DIR}
 
+    if [ "${SET_HOSTSFILE}" == "true" ]; then
+        setHostsFile
+    fi
+	
     # Build and push docker images if needed
     if [ "${BUILD}" == "true" ]; then
         buildDockerImage

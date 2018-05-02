@@ -151,6 +151,8 @@ pipeline {
                 //        credentialsId: 'eldada-bb',
                         url: 'https://github.com/palaphon/jenkins-pipeline-kubernetes.git'
 
+				sh "${WORKSPACE}/build.sh --set_hostsfile"
+        
                 // Validate kubectl
                 sh "kubectl cluster-info"
 
