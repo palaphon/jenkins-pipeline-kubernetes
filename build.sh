@@ -107,8 +107,6 @@ pushHelmChart() {
     echo "Helm chart: ${chart_name}"
 
 	bx pr login -a https://122.155.223.7:8443 --skip-ssl-validation -u admin -p P@ssw0rd -c id-mycluster-account
-	bx pr clusters
-	bx pr cluster-config mycluster
 	helm init --client-only
 	helm version --tls
 	
