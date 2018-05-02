@@ -49,7 +49,7 @@ def helmDelete (namespace, release) {
     script {
         release = "${release}-${namespace}"
 		sh "bx pr login -a ${HELM_REPO} --skip-ssl-validation -u ${HELM_USR} -p ${HELM_PSW} -c ${HELM_CLUSTER}"
-        sh "[ -z \"\$(helm ls --short ${release} 2>/dev/null)\" ] || helm delete --purge ${release} --tls"
+        sh "[ -z \"\$(helm ls --short ${release} --tls 2>/dev/null)\" ] || helm delete --purge ${release} --tls"
 	    sh "bx pr logout"
     }
 }
