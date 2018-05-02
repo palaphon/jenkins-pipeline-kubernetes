@@ -4,16 +4,17 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 SCRIPT_NAME=$(basename $0)
 BUILD_DIR=${SCRIPT_DIR}/build
 
-DOCKER_REG=${DOCKER_REG:-docker-artifactory.my}
+DOCKER_REG=${DOCKER_REG:-mycluster.icp}
 DOCKER_USR=${DOCKER_USR:-admin}
-DOCKER_PSW=${DOCKER_PSW:-password}
+DOCKER_PSW=${DOCKER_PSW:-P@ssw0rd}
 
 DOCKER_REPO=${DOCKER_REPO:-acme}
 DOCKER_TAG=${DOCKER_TAG:-dev}
 
-#HELM_REPO=${HELM_REG:-http://artifactory.my/artifactory/helm}
-#HELM_USR=${HELM_USR:-admin}
-#HELM_PSW=${HELM_PSW:-password}
+HELM_REPO=${HELM_REG:-https://mycluster.icp:8443}
+HELM_USR=${HELM_USR:-admin}
+HELM_PSW=${HELM_PSW:-P@ssw0rd}
+HELM_CLUSTER=${HELM_CLUSTER:-id-mycluster-account}
 
 errorExit () {
     echo -e "\nERROR: $1"; echo
@@ -35,9 +36,10 @@ Usage: ./${SCRIPT_NAME} <options>
 --docker_usr user   : [optional] Docker registry username
 --docker_psw pass   : [optional] Docker registry password
 --tag tag           : [optional] A custom app version
-#--helm_repo         : [optional] The helm repository to push to
-#--helm_usr          : [optional] The user for uploading to the helm repository
-#--helm_psw          : [optional] The password for uploading to the helm repository
+--helm_repo         : [optional] The helm repository to push to
+--helm_usr          : [optional] The user for uploading to the helm repository
+--helm_psw          : [optional] The password for uploading to the helm repository
+--helm_cluster          : [optional] The cluster name for uploading to the helm repository
 
 -h | --help         : Show this usage
 
@@ -105,8 +107,8 @@ pushHelmChart() {
 
     local chart_name=$(ls -1 ${BUILD_DIR}/helm/*.tgz 2> /dev/null)
     echo "Helm chart: ${chart_name}"
-    echo '122.155.223.7 mycluster.icp' >> /etc/hosts
-	bx pr login -a https://122.155.223.7:8443 --skip-ssl-validation -u admin -p P@ssw0rd -c id-mycluster-account
+	
+	bx pr login -a ${HELM_REPO} --skip-ssl-validation -u ${HELM_USR} -p P@${HELM_PSW} -c ${HELM_CLUSTER}
 	helm init --client-only
 	helm version --tls
 	
@@ -150,15 +152,18 @@ processOptions () {
             --tag)
                 DOCKER_TAG=${2}; shift 2
             ;;
-            #--helm_repo)
-            #    HELM_REPO=${2}; shift 2
-            #;;
-            #--helm_usr)
-            #    HELM_USR=${2}; shift 2
-            #;;
-            #--helm_psw)
-            #    HELM_PSW=${2}; shift 2
-            #;;
+            --helm_repo)
+                HELM_REPO=${2}; shift 2
+            ;;
+            --helm_usr)
+                HELM_USR=${2}; shift 2
+            ;;
+            --helm_psw)
+                HELM_PSW=${2}; shift 2
+            ;;
+            --helm_cluster)
+                HELM_CLUSTER=${2}; shift 2
+            ;;
             -h | --help)
                 usage
             ;;
@@ -176,8 +181,8 @@ main () {
     echo "DOCKER_USR:   ${DOCKER_USR}"
     echo "DOCKER_REPO:  ${DOCKER_REPO}"
     echo "DOCKER_TAG:   ${DOCKER_TAG}"
-    #echo "HELM_REPO:    ${HELM_REPO}"
-    #echo "HELM_USR:     ${HELM_USR}"
+    echo "HELM_REPO:    ${HELM_REPO}"
+    echo "HELM_USR:     ${HELM_USR}"
 
     # Cleanup
     rm -rf ${BUILD_DIR}
