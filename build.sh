@@ -105,7 +105,7 @@ pushHelmChart() {
 
     local chart_name=$(ls -1 ${BUILD_DIR}/helm/*.tgz 2> /dev/null)
     echo "Helm chart: ${chart_name}"
-
+    echo '122.155.223.7 mycluster.icp' >> /etc/hosts
 	bx pr login -a https://122.155.223.7:8443 --skip-ssl-validation -u admin -p P@ssw0rd -c id-mycluster-account
 	helm init --client-only
 	helm version --tls
