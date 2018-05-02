@@ -28,7 +28,7 @@ def helmInstall (namespace, release) {
     script {
         release = "${release}-${namespace}"
         //sh "helm repo add helm ${HELM_REPO}; helm repo update"
-		sh "bx pr login -a ${HELM_REPO} --skip-ssl-validation -u ${HELM_USR} -p P@${HELM_PSW} -c ${HELM_CLUSTER}"
+		sh "bx pr login -a ${HELM_REPO} --skip-ssl-validation -u ${HELM_USR} -p ${HELM_PSW} -c ${HELM_CLUSTER}"
 		sh "helm repo update"
         sh """
             helm upgrade --install --namespace ${namespace} ${release} \
@@ -48,7 +48,7 @@ def helmDelete (namespace, release) {
 
     script {
         release = "${release}-${namespace}"
-		sh "bx pr login -a ${HELM_REPO} --skip-ssl-validation -u ${HELM_USR} -p P@${HELM_PSW} -c ${HELM_CLUSTER}"
+		sh "bx pr login -a ${HELM_REPO} --skip-ssl-validation -u ${HELM_USR} -p ${HELM_PSW} -c ${HELM_CLUSTER}"
         sh "[ -z \"\$(helm ls --short ${release} 2>/dev/null)\" ] || helm delete --purge ${release} --tls"
 	    sh "bx pr logout"
     }
@@ -170,7 +170,7 @@ pipeline {
                 sh "kubectl cluster-info"
 
                 // Init helm client
-				sh "bx pr login -a ${HELM_REPO} --skip-ssl-validation -u ${HELM_USR} -p P@${HELM_PSW} -c ${HELM_CLUSTER}"
+				sh "bx pr login -a ${HELM_REPO} --skip-ssl-validation -u ${HELM_USR} -p ${HELM_PSW} -c ${HELM_CLUSTER}"
                 sh "helm init --client-only"
 				sh "bx pr logout"
                 // Make sure parameters file exists

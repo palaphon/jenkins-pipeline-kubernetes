@@ -112,7 +112,7 @@ packHelmChart() {
 
     [ -d ${BUILD_DIR}/helm ] && rm -rf ${BUILD_DIR}/helm
     mkdir -p ${BUILD_DIR}/helm
-	bx pr login -a ${HELM_REPO} --skip-ssl-validation -u ${HELM_USR} -p P@${HELM_PSW} -c ${HELM_CLUSTER}
+	bx pr login -a ${HELM_REPO} --skip-ssl-validation -u ${HELM_USR} -p ${HELM_PSW} -c ${HELM_CLUSTER}
     helm package -d ${BUILD_DIR}/helm ${SCRIPT_DIR}/helm/acme || errorExit "Packing helm chart ${SCRIPT_DIR}/helm/acme failed"
 	bx pr logout
 }
@@ -124,8 +124,8 @@ pushHelmChart() {
 
     local chart_name=$(ls -1 ${BUILD_DIR}/helm/*.tgz 2> /dev/null)
     echo "Helm chart: ${chart_name}"
-	echo "bx pr login -a ${HELM_REPO} --skip-ssl-validation -u ${HELM_USR} -p P@${HELM_PSW} -c ${HELM_CLUSTER}"
-	bx pr login -a ${HELM_REPO} --skip-ssl-validation -u ${HELM_USR} -p P@${HELM_PSW} -c ${HELM_CLUSTER}
+	echo "bx pr login -a ${HELM_REPO} --skip-ssl-validation -u ${HELM_USR} -p ${HELM_PSW} -c ${HELM_CLUSTER}"
+	bx pr login -a ${HELM_REPO} --skip-ssl-validation -u ${HELM_USR} -p ${HELM_PSW} -c ${HELM_CLUSTER}
 	helm init --client-only
 	helm version --tls
 	
