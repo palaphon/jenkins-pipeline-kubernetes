@@ -29,7 +29,7 @@ def helmInstall (namespace, release) {
         release = "${release}-${namespace}"
         sh "helm repo add helm ${HELM_REPO}; helm repo update"
         sh """
-            helm upgrade --install --namespace ${namespace} ${release} \
+            helm upgrade --install --tls --namespace ${namespace} ${release} \
                 --set imagePullSecrets=${IMG_PULL_SECRET} \
                 --set image.repository=${DOCKER_REG}/${IMAGE_NAME},image.tag=${DOCKER_TAG} helm/acme
         """
@@ -112,7 +112,7 @@ pipeline {
         IMAGE_NAME = 'acme'
         TEST_LOCAL_PORT = 8817
         DEPLOY_PROD = false
-        PARAMETERS_FILE = "${JENKINS_HOME}/parameters.groovy"
+        //PARAMETERS_FILE = "${JENKINS_HOME}/parameters.groovy"
     }
 
     parameters {
@@ -123,16 +123,16 @@ pipeline {
         // The commented out parameters are for optionally using them in the pipeline.
         // In this example, the parameters are loaded from file ${JENKINS_HOME}/parameters.groovy later in the pipeline.
         // The ${JENKINS_HOME}/parameters.groovy can be a mounted secrets file in your Jenkins container.
-/*
-        string (name: 'DOCKER_REG',       defaultValue: 'docker-artifactory.my',                   description: 'Docker registry')
+
+        string (name: 'DOCKER_REG',       defaultValue: 'mycluster.icp:8500/default',                   description: 'Docker registry')
         string (name: 'DOCKER_TAG',       defaultValue: 'dev',                                     description: 'Docker tag')
         string (name: 'DOCKER_USR',       defaultValue: 'admin',                                   description: 'Your helm repository user')
-        string (name: 'DOCKER_PSW',       defaultValue: 'password',                                description: 'Your helm repository password')
+        string (name: 'DOCKER_PSW',       defaultValue: 'P@ssw0rd',                                description: 'Your helm repository password')
         string (name: 'IMG_PULL_SECRET',  defaultValue: 'docker-reg-secret',                       description: 'The Kubernetes secret for the Docker registry (imagePullSecrets)')
-        string (name: 'HELM_REPO',        defaultValue: 'https://artifactory.my/artifactory/helm', description: 'Your helm repository')
+        /*string (name: 'HELM_REPO',        defaultValue: 'https://artifactory.my/artifactory/helm', description: 'Your helm repository')*/
         string (name: 'HELM_USR',         defaultValue: 'admin',                                   description: 'Your helm repository user')
-        string (name: 'HELM_PSW',         defaultValue: 'password',                                description: 'Your helm repository password')
-*/
+        string (name: 'HELM_PSW',         defaultValue: 'P@ssw0rd',                                description: 'Your helm repository password')
+
     }
 
     // In this example, all is built and run from the master
@@ -153,7 +153,7 @@ pipeline {
                 sh "kubectl cluster-info"
 
                 // Init helm client
-                sh "helm init"
+                sh "helm init --client-only"
 
                 // Make sure parameters file exists
                 script {
@@ -163,10 +163,10 @@ pipeline {
                 }
 
                 // Load Docker registry and Helm repository configurations from file
-                load "${JENKINS_HOME}/parameters.groovy"
+                //load "${JENKINS_HOME}/parameters.groovy"
 
                 echo "DOCKER_REG is ${DOCKER_REG}"
-                echo "HELM_REPO  is ${HELM_REPO}"
+                //echo "HELM_REPO  is ${HELM_REPO}"
 
                 // Define a unique name for the tests container and helm release
                 script {
@@ -229,7 +229,8 @@ pipeline {
                 sh "${WORKSPACE}/build.sh --push --registry ${DOCKER_REG} --tag ${DOCKER_TAG} --docker_usr ${DOCKER_USR} --docker_psw ${DOCKER_PSW}"
 
                 echo "Packing helm chart"
-                sh "${WORKSPACE}/build.sh --pack_helm --push_helm --helm_repo ${HELM_REPO} --helm_usr ${HELM_USR} --helm_psw ${HELM_PSW}"
+                //sh "${WORKSPACE}/build.sh --pack_helm --push_helm --helm_repo ${HELM_REPO} --helm_usr ${HELM_USR} --helm_psw ${HELM_PSW}"
+				sh "${WORKSPACE}/build.sh --pack_helm --push_helm --helm_repo ${HELM_REPO} --helm_usr ${HELM_USR} --helm_psw ${HELM_PSW}"
             }
         }
 
