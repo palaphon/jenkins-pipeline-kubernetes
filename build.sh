@@ -53,7 +53,7 @@ END_USAGE
 setHostsFile () {
     echo -e "\nSet Hosts File"
 	
-	grep -q -F '122.155.223.7 mycluster.icp' /etc/hosts || echo '122.155.223.7 mycluster.icp' >> /etc/hosts
+	#grep -q -F '122.155.223.7 mycluster.icp' /etc/hosts || echo '122.155.223.7 mycluster.icp' >> /etc/hosts
 	
 	cat /etc/hosts
 	
